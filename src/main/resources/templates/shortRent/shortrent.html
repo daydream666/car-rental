@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>短租</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/shortrent.shortrent.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<div id="app">
+    <div data-v-67ef3a4a class="csdheader">
+        <div data-v-67ef3a4a class="layout clear">
+            <div data-v-67ef3a4a class="left csdnav" id="daohang">
+                <label data-v-67ef3a4a v-if="weidenglu">
+                    <a data-v-67ef3a4a href="../pagehome/login.html" class="colorRed" >登录</a>
+                    <a data-v-67ef3a4a href="" class="colorRed">/</a>
+                    <a data-v-67ef3a4a href="../pagehome/register.html" class="colorRed" style="margin-right: 10px;">注册</a>
+                </label>
+
+                <label data-v-67ef3a4a v-if="denglu">
+                    <a data-v-67ef3a4a href="#">你好，</a>
+                    <a data-v-67ef3a4a href="#" class="colorRed">/</a>
+                    <a data-v-67ef3a4a href="../pagehome/index.html" class="colorRed" style="margin-right: 10px;">[退出]</a>
+                </label>
+
+            </div>
+            <div data-v-67ef3a4a="" class="right phone">
+                <div data-v-67ef3a4a="" class="menu">
+                    <a data-v-67ef3a4a="" href="../mymain/mymain.html">我的租车</a>
+                </div>
+                <div data-v-67ef3a4a="">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div data-v-39f7f629 class="csdnav">
+        <div data-v-39f7f629="" class="layout clear">
+            <div data-v-39f7f629="" class="left logo">
+                <a data-v-39f7f629="" href="index.html">
+                </a>
+            </div>
+            <div data-v-39f7f629="" class="left navCom">
+                <ul data-v-39f7f629="">
+                    <li data-v-39f7f629="">
+                        <a data-v-39f7f629="" href="/car/toShortRent" target="_blank" class="">长租</a>
+                    </li>
+                    <li data-v-39f7f629="">
+                        <a data-v-39f7f629="" href="/car/toShortRent" target="_self" class="colorRed">短租</a>
+                    </li>
+                    <li data-v-39f7f629="">
+                        <a data-v-39f7f629="" href="/car/index" target="_self" >
+                            <span data-v-39f7f629="">首页</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="chooseCar">
+
+            <div class="chooseCarL">
+                <form action="" onsubmit="return false;">
+                <div class="choose-get item">
+                    <span class="itemTitle-red left">取&nbsp&nbsp车&nbsp&nbsp地&nbsp&nbsp址</span>
+                    <div id="sel"  v-cloak>
+                         <select id="dqsel"><!-- @change="getCity(cityId)" v-model="cityId"-->
+                            <option>请选择</option>
+                            <option v-for="mc in mcs" :value="mc.id">{{mc.name}}</option>
+                        </select>
+
+                        <select id="bmsel">
+                            <option>请选择</option>
+                            <option v-for="city in citys" :value="city.id">{{city.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="choose-return item">
+                    <span class="itemTitle-red left">还&nbsp&nbsp车&nbsp&nbsp地&nbsp&nbsp址</span>
+                    <div id="seltwo"  v-cloak>
+                        <select id="hcc" >
+                            <option>请选择</option>
+                            <option v-for="mc in mcs" :value="mc.id">{{mc.name}}</option>
+                        </select>
+                        <select id="hcs">
+                            <option>请选择</option>
+                            <option v-for="city in citys" :value="city.id">{{city.name}}</option>
+                        </select>
+                    </div>
+
+                </div>
+                </form>
+
+            </div>
+        <div class="chooseCarR">
+            <button class="goChooseCar" onclick="selectCar()">去选车</button>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+
+    var vm = new Vue({
+        el:'#dqsel',
+        data:{
+            mcs : [],
+        },
+    });
+
+    var vm2 = new Vue({
+        el:'#bmsel',
+        data:{
+            citys : [],
+        },
+    });
+
+
+    $(function(){
+        loadfirst(0);
+    });
+
+    function sub(id){
+        loadfirst(id);
+    }
+
+    function loadfirst(pid){
+        $.ajax({
+            type:"get",
+            url:"/city/select?pid="+pid,
+            dataType:"json",
+            success:function(data){
+
+                //id为0时为父类
+                if(pid==0){
+                    vm.mcs=data;
+                }else{
+                    vm2.citys = data;
+                }
+            }
+        });
+    }
+    $("#dqsel").change(function(){
+        loadfirst($(this).children('option:selected').val());
+    })
+
+
+</script>
+
+<script type="text/javascript">
+
+    var vm3 = new Vue({
+        el:'#hcc',
+        data:{
+            mcs : [],
+        },
+    });
+
+    var vm4 = new Vue({
+        el:'#hcs',
+        data:{
+            citys : [],
+        },
+    });
+
+
+
+    $(function(){
+        load(0);
+    });
+
+    function sub(id){
+        load(id);
+    }
+
+    function load(pid){
+        $.ajax({
+            type:"get",
+            url:"/city/select?pid="+pid,
+            dataType:"json",
+            success:function(data){
+                //id为0时为父类
+                if(pid==0){
+                    vm3.mcs=data;
+                }else{
+                    vm4.citys=data;
+                }
+            }
+        });
+    }
+
+    $("#hcc").change(function(){
+        load($(this).children('option:selected').val());
+    })
+
+</script>
+
+<script type="text/javascript">
+
+    function selectCar() {
+        var getid = $("#bmsel").val();
+        var backid = $("#hcs").val();
+        window.location.href="toshortsort?getid="+getid+"&backid="+backid;
+
+        }
+
+</script>
+
+<script type="text/javascript">
+    var vm5 = new Vue({
+        el:'#daohang',
+        data:{
+            denglu:'',
+            weidenglu:''
+
+
+        },
+    });
+
+    $(function () {
+        $.ajax({
+            type:"post",
+            url:"/user/ajaxLogin",
+            dataType:"json",
+            success:function(data){
+                //id为0时为父类
+                if(data=='1'){
+                    vm5.denglu=true;
+                    vm5.weidenglu=false;
+                }else{
+                    vm5.denglu=false;
+                    vm5.weidenglu=true;
+                }
+            }
+        });
+    })
+
+</script>
+
+
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/mymain.mymain.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body style="position: static">
+
+<div id="app" class="bgGray">
+    <div data-v-95ac8d30="" class="header3">
+        <div data-v-95ac8d30="" class="layout clear">
+            <div data-v-95ac8d30="" class="left logo">
+                <a data-v-95ac8d30="" href="/car/index">
+                </a>
+            </div>
+            <div data-v-95ac8d30="" class="header3User right">
+                <span data-v-95ac8d30="" class="sp2">欢迎您，<span th:text="${session.user}"></span></span>
+                <span data-v-95ac8d30="" class="sp3">&nbsp;&nbsp;积分：<span th:text="${score}"></span></span>
+            </div>
+        </div>
+    </div>
+    <div class="userInfo">
+        <div class="layout">
+            <div class="userInfoCom clear">
+                <div class="userInfoL left">
+                    <div data-v-1cae2c34="" class="userNav">
+                        <ul data-v-1cae2c34="" class="manNav">
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tomymain" class="">订单管理</a>
+                            </li>
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tobackcar" class="">还车管理</a>
+                            </li>
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tomyinfo" class="sel">个人信息</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="userInfoR right">
+
+                    <div class="orderManage manage">
+                        <div class="orderManageTit manageTit clear">
+                            <div class="left tit">个人信息</div>
+                        </div>
+                    <div class="site-demo-button" id="layerDemo" style="margin-bottom: 0;">
+                        <div class="orderList list" id="noda">
+                                    <table  class="tableinfo">
+                                        <tr>
+                                            <td>昵称：{{nickname}}</td>
+                                            <td><button data-method="offset" data-type="auto" class="layui-btn-nickname layui-btn-normal">修改</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>生日：{{birthday}}</td>
+                                            <td><button data-method="offset" data-type="auto" class="layui-btn-birthday layui-btn-normal">修改</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>手机号：{{tel}}</td>
+                                            <td><button data-method="offset" data-type="auto" class="layui-btn layui-btn-normal">修改</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><img v-bind:src="image" width="100px" height="100px"></td>
+                                            <td>
+                                                <div class="setting_right" @click.stop="uploadHeadImg">
+                                                    <div class="caption">
+                                                        <button data-method="offset" data-type="auto" class="layui-btn-avatar layui-btn-normal">修改</button>
+                                                    </div>
+                                                </div>
+                                                    <input type="file" accept="image/*" @change="handleFile" class="hiddenInput" style="display: none;" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                        </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-v-3aaf9db2="" class="footer2">
+        <div data-v-3aaf9db2="" class="layout clear">
+            <div data-v-3aaf9db2="" class="d1">
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var vm = new Vue({
+        el:'#noda',
+        data:{
+            tel:'',
+            email:'',
+            image:'http://localhost:8899/car-images/avatar.png',
+            nickname:'',
+            birthday:'',
+        },
+        methods: {
+            // 打开图片上传
+            uploadHeadImg: function () {
+                this.$el.querySelector('.hiddenInput').click()
+            },
+            // 将头像显示
+            handleFile: function (e) {
+                /*1.this.$el.querySelector('.hiddenInput') 是获取文档中 class=”hiddenInput” 的元素。
+                2.在打开文件夹选中图片确认后，执行handleFile函数
+                3.let $target = e.target || e.srcElement 表示调用他的各种属性，
+                两个的区别是：ie下支持e.srcElement，ff支持e.target。
+                4.由于手机上可以选择多张图片，所以let file = $target.files[0]，表示取第一张图。
+                5.var reader = new FileReader() FileReader 对象允许Web应用程序异步读取存储在用户计算机上的文件（或原始数据缓冲区）的内容，使用 File 或 Blob 对象指定要读取的文件或数据。
+                6.onload 事件会在页面或图像加载完成后立即发生。
+                7.FileReader对象的readAsDataURL方法可以将读取到的文件编码成Data URL*/
+                var $target = e.target || e.srcElement
+                var file = $target.files[0]
+                var reader = new FileReader()
+                reader.onload = (data) => {
+                    var res = data.target || data.srcElement
+                    this.image = res.result
+                }
+                reader.readAsDataURL(file);
+            },
+        }
+    });
+
+    $(function () {
+        $.ajax({
+            type:"get",
+            url:"ajaxmyinfo",
+            dataType:"json",
+            success:function(data){
+                //id为0时为父类
+                //alert(data)
+                if(data!=null){
+                    vm.tel = data.tel;
+                    vm.email=data.email;
+                    /*vm.image=data.image;*/
+                    vm.nickname=data.nickname;
+                    vm.birthday=data.birthday;
+                }
+            }
+        });
+    })
+
+</script>
+
+<!--生日的修改-->
+<script>
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+        //触发事件
+        var active = {
+            setTop: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+            }
+            ,offset: function(othis){
+                var type = othis.data('type')
+                    ,text = othis.text();
+
+                layer.open({
+                    type: 1
+                    ,offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    ,id: 'layerDemo'+type //防止重复弹出
+                    ,content: '<div style="width: 300px; height: 200px;">请输入修改后的生日：<br><form><input type="text" placeholder="例如格式：2020-2-2" name="birthday" id="birthday"></form></div>'
+                    ,btn: '修改'
+                    ,btnAlign: 'c' //按钮居中
+                    ,shade: 0 //不显示遮罩
+                    ,yes: function(){
+                        $.ajax({
+                            url:"updatemybirthday",
+                            type:"post",
+                            data:$("form").serialize(),
+                            dataType:'json',
+                            success:function(res) {
+                                if(res == '1') {
+                                    alert("修改成功！");
+                                    // window.location.href=("myinfo.html");
+                                    window.location.href=("/user/tomyinfo");
+                                } else {
+                                    layer.alert(res.info);
+                                }
+                            },
+                            error: function() {
+                                elert("ajax错误");
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        $('#layerDemo .layui-btn-birthday').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+    });
+</script>
+
+<!--昵称的修改-->
+<script>
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+        //触发事件
+        var active = {
+            setTop: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+            }
+            ,offset: function(othis){
+                var type = othis.data('type')
+                    ,text = othis.text();
+
+                layer.open({
+                    type: 1
+                    ,offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    ,id: 'layerDemo'+type //防止重复弹出
+                    ,content: '<div style="width: 300px; height: 200px;">请输入修改后的昵称：<br><form><input type="text" name="nickname" id="nickname"></form></div>'
+                    ,btn: '修改'
+                    ,btnAlign: 'c' //按钮居中
+                    ,shade: 0 //不显示遮罩
+                    ,yes: function(){
+                        $.ajax({
+                            url:"updatemynickname",
+                            type:"post",
+                            data:$("form").serialize(),
+                            dataType:'json',
+                            success:function(res) {
+                                if(res == '1') {
+                                    alert("修改成功！");
+                                    // window.location.href=("myinfo.html");
+                                    window.location.href=("/user/tomyinfo");
+                                } else {
+                                    layer.alert(res.info);
+                                }
+                            },
+                            error: function() {
+                                elert("ajax错误");
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        $('.layui-btn-nickname').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+    });
+</script>
+
+<!--手机号修改-->
+<script>
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+        //触发事件
+        var active = {
+            setTop: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+            }
+            ,offset: function(othis){
+                var type = othis.data('type')
+                    ,text = othis.text();
+
+                layer.open({
+                    type: 1
+                    ,offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    ,id: 'layerDemo'+type //防止重复弹出
+                    ,content: '<div style="width: 300px; height: 200px;">请输入修改后的手机号：<br><form><input type="text" name="tel" id="tel"></form></div>'
+                    ,btn: '修改'
+                    ,btnAlign: 'c' //按钮居中
+                    ,shade: 0 //不显示遮罩
+                    ,yes: function(){
+                        $.ajax({
+                            url:"updatemyinfo",
+                            type:"post",
+                            data:$("form").serialize(),
+                            dataType:'json',
+                            success:function(res) {
+                                if(res == '1') {
+                                    alert("修改成功！");
+                                    // window.location.href=("myinfo.html");
+                                    window.location.href=("/user/login");
+                                } else {
+                                    layer.alert(res.info);
+                                }
+                            },
+                            error: function() {
+                                elert("ajax错误");
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        $(' .layui-btn').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+    });
+</script>
+
+
+</body>
+</html>dy>
+</html>

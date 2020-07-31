@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>短租排序</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/shortrent.shortrent.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body id="app">
+<div data-v-67ef3a4a class="csdheader">
+    <div data-v-67ef3a4a class="layout clear">
+        <div data-v-67ef3a4a class="left csdnav">
+            <label data-v-67ef3a4a>
+                <a data-v-67ef3a4a href="/user/login" class="colorRed">登录</a>
+                <a data-v-67ef3a4a href="" class="colorRed">/</a>
+                <a data-v-67ef3a4a href="/user/register" class="colorRed" style="margin-right: 10px;">注册</a>
+            </label>
+        </div>
+        <div data-v-67ef3a4a="" class="right phone">
+            <div data-v-67ef3a4a="" class="menu">
+                <a data-v-67ef3a4a="" href="/user/login">我的租车</a>
+            </div>
+            <div data-v-67ef3a4a="">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div data-v-39f7f629 class="csdnav">
+    <div data-v-39f7f629="" class="layout clear">
+        <div data-v-39f7f629="" class="left logo">
+            <a data-v-39f7f629="" href="index.html">
+            </a>
+        </div>
+        <div data-v-39f7f629="" class="left navCom">
+            <ul data-v-39f7f629="">
+                <li data-v-39f7f629="">
+                    <a data-v-39f7f629="" href="/car/toShortRent" target="_blank" class="">长租</a>
+                </li>
+                <li data-v-39f7f629="">
+                    <a data-v-39f7f629="" href="/car/toShortRent" target="_self" class="colorRed">短租</a>
+                </li>
+                <li data-v-39f7f629="">
+                    <a data-v-39f7f629="" href="/car/index" target="_self" >
+                        <span data-v-39f7f629="">首页</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="selCarMsg" >
+    <div class="selCarMsgCom">
+        <div class="Msg" >取车地址：{{getcitys}}</div>
+    </div>
+
+    <div class="selCarMsgCom">
+        <div class="Msg">还车地址：{{backcitys}}</div>
+    </div>
+</div>
+
+
+
+<div class="carListTab">
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">按租金排序</li>
+            <li>按热度排序</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <!--for循环这段代码-->
+
+                <div class="item clear" id="carlist">
+                    <div class="thisPlace clear" id="carli" v-for="site in sites">
+                        <div class="itemCarImg left">
+                           <img :src="site.picture">
+                        </div>
+                        <div class="itemCarMsg left" >
+                            <h1 id="sitename">{{site.name}}</h1>
+                            <p id="sitetype">{{site.type}}</p><p id="sitenum">{{site.sitnum}}座</p>
+                        </div>
+                        <div class="itemPriceMsg left">
+                            <div class="itemPriceMsgC left">
+                                <p class="p1">
+                                    <span id="siteprice">{{site.price}}&nbsp;/元</span>
+
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="itemBtn left">
+                            <button class="butt"  @click="selectCar(site.id)">预定</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="layui-tab-item">
+
+                <div class="item clear" id="carlis">
+                    <div class="thisPlace clear" id="carl" v-for="site in cars">
+                        <div class="itemCarImg left">
+                            <img  :src="site.picture">
+                        </div>
+                        <div class="itemCarMsg left" >
+                            <h1>{{site.name}}</h1>
+                            <p>{{site.type}}</p><p>{{site.sitnum}}座</p>
+                        </div>
+                        <div class="itemPriceMsg left">
+                            <div class="itemPriceMsgC left">
+                                <p class="p1">
+                                    <span>{{site.price}}&nbsp;/元</span>
+
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="itemBtn left">
+                            <button class="butt" @click="selectCar(site.id)" >预定</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+    var getid = window.location.search;
+    var vm = new Vue({
+        el:'.selCarMsg',
+        data:{
+            getcitys : '',
+            backcitys: ''
+        },
+    });
+
+   // 租金排序预定按钮提交事件
+   var vm2 = new Vue({
+       el:'#carlist',
+        data:{
+           sites : [],
+        },
+       methods:{
+         selectCar:function (id) {
+             window.location.href="/order/tosubmit"+getid +"&cid=" +id;
+         }
+       },
+
+    });
+
+    //热度排序预定按钮提交事件
+    var vm3 = new Vue({
+        el:'#carlis',
+        data:{
+            cars : [],
+        },
+        methods:{
+            selectCar:function (id) {
+                window.location.href="/order/tosubmit"+getid +"&cid=" +id;
+            }
+        }
+
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        var getid = window.location.search;
+        // alert(getid)
+        $.ajax({
+        type:"get",
+        url:"/city/citys"+getid,
+            dataType:"json",
+            success:function(data){
+                if(data != null) {
+                 // var infos = data.info;
+                 // var get = infos.getCity;
+                 // var back = infos.backCity;
+                 // vm.getcitys = get.name;
+                 // vm.backcitys = back.name;
+                    vm.getcitys = data[0].name;
+                    vm.backcitys = data[1].name;
+            }
+        },
+        error : function(){
+            alert("ajax加载失败");
+            }
+
+            })
+        })
+
+</script>
+
+<!--按价格排序ajax-->
+<script type="text/javascript">
+    $(function(){
+        var getid = window.location.search;
+        $.ajax({
+            type:"get",
+            url:"/car/price"+getid,
+            dataType:"json",
+            success:function(data){
+                /*if(data.code==1) {
+                    vm2.sites = data.info;
+                }*/
+                if(data!=null) {
+                    vm2.sites = data;
+                }
+            },
+            error : function(){
+                alert("ajax加载失败");
+            }
+
+        })
+    })
+
+</script>
+<!--按热度排序ajax-->
+<script type="text/javascript">
+    $(function(){
+        var getid = window.location.search;
+        $.ajax({
+            type:"get",
+            url:"/car/num"+getid,
+            dataType:"json",
+            success:function(data){
+                /*if(data.code==1) {
+                    vm3.cars = data.info;
+                }*/
+                if(data!=null) {
+                    vm3.cars = data;
+                }
+            },
+            error : function(){
+                alert("ajax加载失败");
+            }
+
+        })
+    })
+
+</script>
+
+
+<script>
+    layui.use('element', function(){
+        var $ = layui.jquery
+            ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+
+
+    });
+</script>
+
+
+</body>
+</html>

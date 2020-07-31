@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" http-equiv="refresh" url="/user/tomymain">
+    <title>还车管理</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/mymain.mymain.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body style="position: static">
+
+<div id="app" class="bgGray">
+    <div data-v-95ac8d30="" class="header3">
+        <div data-v-95ac8d30="" class="layout clear">
+            <div data-v-95ac8d30="" class="left logo">
+                <a data-v-95ac8d30="" href="/car/index">
+                </a>
+            </div>
+            <div data-v-95ac8d30="" class="header3User right">
+                <i data-v-95ac8d30="" class="iconfont icon-phone"></i>
+            <span data-v-95ac8d30="" class="sp2">欢迎您，<span th:text="${session.user}"></span></span>
+                <span data-v-95ac8d30="" class="sp3">&nbsp;&nbsp;积分：<span id="score" th:text="${score}"></span></span></span>
+        </div>
+        </div>
+    </div>
+    <div class="userInfo">
+        <div class="layout">
+            <div class="userInfoCom clear">
+                <div class="userInfoL left">
+                    <div data-v-1cae2c34="" class="userNav">
+                        <ul data-v-1cae2c34="" class="manNav">
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tomymain" class="sel">订单管理</a>
+                            </li>
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tobackcar" class="">还车管理</a>
+                            </li>
+                             <li data-v-1cae2c34="">
+                                 <a data-v-1cae2c34="" href="/user/tomyinfo" class="">个人信息</a>
+                             </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="userInfoR right">
+
+                    <div class="orderManage manage">
+                        <div class="orderType clear type">
+                            <div class="sel">还车管理</div>
+                        </div>
+                        <div class="orderList list">
+                            <div class="orderListCom listCom" style="position: static;">
+                                <table cellspacing="0" cellpadding="0">
+                                    <tr class="firstTr">
+                                        <th>编号</th>
+                                        <th>订单金额(押金1000元)</th>
+                                        <th>车型</th>
+                                        <th>取车地址</th>
+                                        <th>还车地址</th>
+                                        <th>租车状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </table>
+                                <div class="noData" id="noda">
+                                    <table cellspacing="0" cellpadding="0">
+                                        <tr class="firstTr">
+                                            <!--/*@thymesVar id="backcar" type="templates"*/-->
+                                            <td id="b" th:text="${backcar.id} != null ? ${backcar.id} :'1'"></td>
+                                            <td th:text="${backcar.oprice} != null ? ${backcar.oprice}:'无'"></td>
+                                            <td th:text="${backcar.car.name} != null ? ${backcar.car.name}:'无' "></td>
+                                            <td th:text="${backcar.city1.name} != null ? ${backcar.city1.name}:'无'"></td>
+                                            <td th:text="${backcar.city2.name} != null ? ${backcar.city2.name}:'无'"></td>
+                                            <td id="status" th:text="${backcar.status} != null ? ${backcar.status}:'无'"></td>
+                                            <td>
+                                                <a href="#" id="backcar" th:onclick="'javascript:backcar('+${backcar.id}+')' " style="color:red">还车</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-v-3aaf9db2="" class="footer2">
+        <div data-v-3aaf9db2="" class="layout clear">
+            <div data-v-3aaf9db2="" class="d1">
+                </div></div></div>
+
+   </div>
+
+<script type="text/javascript">
+    var text = $("#b").text();
+    window.console.log("id=");
+    //还车
+    function backcar(id) {
+        $.ajax({
+            type:"get",
+            url:"/backcar/get?id="+id,
+            dataType:"text",
+            async:false,
+            success:function(data){
+                if (data.toString()=="reviewed"){
+                    //待审核
+                    alert("正在审核中...");
+                }else if (data.toString()=="backed"){
+                    //已归还
+                    alert("审核通过，待付款");
+                    window.location.href = "/user/tomymain?id="+id;
+                }else if (data.toString() == "complete") {
+                    alert("没有租车信息");
+                }
+            },
+            error:function () {
+                alert("没有租车信息");
+            }
+        })
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qf.mapper.CarMapper">
+
+    <select id="findAll" resultType="com.qf.entity.Car">
+        SELECT * from sys_car where cid=#{getid} order BY price
+    </select>
+
+    <select id="orderByNum" resultType="com.qf.entity.Car">
+        SELECT * from sys_car where cid=#{getid} order BY number
+    </select>
+
+    <select id="findById" resultType="com.qf.entity.Car">
+        select * from sys_car where id = #{id}
+    </select>
+
+    <resultMap id="carMap" type="com.qf.entity.Car">
+        <id property="id" column="cid"></id>
+        <result property="name" column="name"></result>
+        <result property="type" column="type"></result>
+        <result property="sitnum" column="sitnum"></result>
+        <result property="price" column="price"></result>
+        <result property="number" column="number"></result>
+        <result property="picture" column="picture"></result>
+        <association property="city" javaType="com.qf.entity.City">
+            <result property="name" column="cityname"></result>
+        </association>
+    </resultMap>
+    <select id="selectAll" resultMap="carMap">
+        SELECT c.id cid,c.name,c.type,c.sitnum,c.price,c.picture,c.number,c1.name cityname
+        FROM sys_car c,sys_city c1
+        WHERE cid=c1.id
+        limit #{page},5
+    </select>
+    <select id="countCar" resultType="Integer">
+        SELECT count(*) FROM sys_car,sys_city
+        WHERE sys_car.cid=sys_city.id
+    </select>
+
+    <delete id="deleteCarById">
+        delete from sys_car where id=#{id}
+    </delete>
+
+    <!-- 后台car修改数据回显 -->
+    <resultMap id="afterCarCityMap" type="com.qf.entity.Car">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="cid" column="cid"></result>
+        <result property="type" column="type"></result>
+        <result property="sitnum" column="sitnum"></result>
+        <result property="price" column="price"></result>
+        <result property="number" column="number"></result>
+        <result property="picture" column="picture"></result>
+        <association property="city" javaType="com.qf.entity.City">
+            <result property="name" column="cityname"></result>
+        </association>
+    </resultMap>
+    <select id="selectById" resultType="com.qf.entity.Car" resultMap="afterCarCityMap">
+        select car.id,car.cid,car.name,car.type,car.sitnum,car.price,
+        car.number,car.picture,city.name cityname
+        from sys_car car,sys_city city
+        where car.cid = city.id
+        having car.id = #{id}
+    </select>
+
+    <!-- 后台car数据修改 -->
+    <update id="updateCar" parameterType="com.qf.entity.Car">
+        update sys_car
+        set
+        name = #{name},
+        type = #{type},
+        sitnum = #{sitnum},
+        cid = #{cid},
+        price = #{price},
+        number = #{number},
+        picture = #{picture}
+        where id = #{id}
+    </update>
+
+    <!-- 后台car添加 -->
+    <insert id="addCar" parameterType="com.qf.entity.Car">
+        insert into sys_car
+        (name,type,sitnum,cid,price,number,picture)
+        values
+        (#{name},#{type},#{sitnum},#{cid},#{price},#{number},#{picture})
+    </insert>
+</mapper>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/pagehome.login.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<div data-v-0a99943a id="app">
+    <div data-v-95c8bc32="" data-v-0a99943a="" class="header2">
+    <div data-v-95c8bc32="" class="layout clear">
+        <div data-v-95c8bc32="" class="left logo">
+            <a data-v-95c8bc32="" href="#">
+            </a>
+        </div>
+        <h2 data-v-95c8bc32="" class="left">欢迎登录</h2>
+    </div>
+    </div>
+    <div data-v-0a99943a="" class="login">
+        <div data-v-0a99943a="" class="layout">
+            <div data-v-0a99943a="" class="loginCom clear">
+                <div data-v-0a99943a="" class="loginImg left">
+                    <img data-v-0a99943a="" src="http://localhost:8080/images/pst.jpg">
+                </div>
+                <div data-v-0a99943a="" class="loginType right">
+                    <div class="denglu">
+                        登&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp录
+                    </div>
+                    <div class="forms">
+                        <form class="layui-form" method="post">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">用户名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="tel" required  lay-verify="required" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">密&nbsp&nbsp&nbsp&nbsp码</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div data-v-0a99943a="" class="other clear"><a data-v-0a99943a="" href="/user/toForgetPwd?id=after" class="right forget">忘记密码？</a></div>
+                            <div class="layui-form-item">
+
+                                    <button class="layui-btn" lay-submit lay-filter="formDemo">登录</button>
+                            </div>
+                            <div data-v-0a99943a="" class="goRegister">
+                                还没有账号？<a data-v-0a99943a="" href="/user/afterRegister">免费注册</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script>
+    //Demo
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(dt){
+            $.ajax({
+                url:"/user/afterAjaxLogin",
+                type:"post",
+                data:$("form").serialize(),
+                dataType:'json',
+                success:function(obj) {
+                    console.log(obj.code);
+                    if(obj == '1') {
+                        window.location.href="/car/toCar";
+                    }else {
+                        layer.alert(obj.info);
+                    }
+                },
+                error:function(){
+                    layer.alert("ajax错误");
+                }
+            });
+            return false;
+
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qf.mapper.UserMapper">
+
+    <select id="findByTelPwd" resultType="com.qf.entity.User">
+        select * from sys_user
+        <where>
+            <if test="tel != null and tel !=''">
+                tel=#{tel}
+            </if>
+            <if test="password != null and password !=''">
+                and password=#{password}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addUser" parameterType="com.qf.entity.User">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into sys_user (tel,password,email,invitation,image)
+        values (#{tel},#{password},#{email},#{invitation},#{image})
+    </insert>
+
+    <!--修改手机号-->
+    <update id="updateUser">
+        update sys_user
+        set
+        <if test="tel != null and tel != ''">
+            tel = #{tel}
+        </if>
+        <if test="email != null and email != ''">
+            ,email = #{email}
+        </if>
+        <if test="password != null and password != ''">
+            ,password = #{password}
+        </if>
+        where id = #{id}
+    </update>
+
+    <!--修改昵称-->
+    <update id="updatenickname">
+        update sys_user
+        set nickname = #{nickname}
+        where tel = #{tel}
+    </update>
+
+    <!--修改生日-->
+    <update id="updatebirthday">
+        update sys_user
+        set birthday = #{birthday}
+        where tel = #{tel}
+    </update>
+
+    <!--删除订单-->
+    <delete id="deleteOrderById">
+        delete from sys_order where id=#{id}
+    </delete>
+
+    <resultMap id="afterUserMap" type="com.qf.entity.User">
+        <id property="id" column="id"></id>
+        <result property="tel" column="tel"></result>
+        <result property="password" column="password"></result>
+        <result property="email" column="email"></result>
+        <result property="invitation" column="invitation"></result>
+        <result property="image" column="image"></result>
+        <result property="nickname" column="nickname"></result>
+        <result property="birthday" column="birthday"></result>
+    </resultMap>
+    <!--后台用户查询分页-->
+    <select id="selectAllUser" resultMap="afterUserMap">
+        select id,tel,password,email,invitation,image,nickname,birthday
+        FROM sys_user limit #{page},5
+    </select>
+
+    <select id="countUser" resultType="java.lang.Integer">
+        select count(*) from sys_user
+    </select>
+
+    <!--删除用户-->
+    <delete id="deleteUserById" parameterType="java.lang.Integer">
+        delete from sys_user
+        where id = #{id}
+    </delete>
+
+    <!-- 验证邮箱 -->
+    <select id="verifyEmail" parameterType="java.lang.String" resultType="com.qf.entity.User">
+        select * from sys_user
+        where email=#{email}
+    </select>
+
+    <update id="updatePwd" parameterType="com.qf.entity.User">
+        update sys_user
+        set
+        password = #{password}
+        where id = #{id}
+    </update>
+</mapper>

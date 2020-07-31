@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/pagehome.register.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body>
+<div data-v-676ecf83="" id="app">
+    <div data-v-95c8bc32="" data-v-676ecf83="" class="header2">
+        <div data-v-95c8bc32="" class="layout clear">
+            <div data-v-95c8bc32="" class="left logo">
+                <a data-v-95c8bc32="" href="index.html">
+                </a>
+            </div>
+            <h2 data-v-95c8bc32="" class="left" style="display: none;">欢迎登录</h2>
+            <h2 data-v-95c8bc32="" class="left">欢迎注册</h2>
+            <h2 data-v-95c8bc32="" class="left" style="display: none;">找回密码</h2>
+            <h2 data-v-95c8bc32="" class="left" style="display: none;">重置密码</h2>
+            <a data-v-95c8bc32="" href="/car/index" class="right">回到首页&gt;</a>
+        </div>
+    </div>
+
+    <div data-v-676ecf83="" class="register">
+        <div data-v-676ecf83="" class="layout">
+            <div data-v-676ecf83="" class="registerCom clear">
+                <div data-v-676ecf83="" class="registerType left">
+                    <h3 data-v-676ecf83="">新用户注册</h3>
+
+                <form class="layui-form" method="post">
+                    <div class="layui-form-item">
+                        <i class="layui-icon layui-icon-cellphone" style="font-size: 20px;"></i>
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="tel" id="tel" name="tel" lay-verify="required|phone" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <i class="layui-icon layui-icon-password" style="font-size: 20px;"></i>
+                        <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="password" id="psw" name="password" lay-verify="password" placeholder="请输入6-12位密码" autocomplete="off" class="layui-input">
+                        </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <i class="layui-icon layui-icon-password" style="font-size: 20px; "></i>
+                        <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="password" id="psw_ag" lay-verify="repassword" placeholder="请再次输入密码" autocomplete="off" class="layui-input">
+                        </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <i class="layui-icon layui-icon-user" style="font-size: 20px; "></i>
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" name="email" lay-verify="email" placeholder="请输入电子邮箱，用于找回密码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                        </div>
+                    </div>
+
+                </form>
+                </div>
+
+                <div data-v-676ecf83="" class="registerImg right">
+                    <h2 data-v-676ecf83="">已有账号？
+                        <a data-v-676ecf83="" href="/user/login">立即登录&nbsp;&gt;&gt;</a>
+                    </h2> <img data-v-676ecf83="" src="http://localhost:8080/images/pst.jpg">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div></div></div> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <!----> <span data-v-0380595b="" class="edge"></span></div> <!----></div>
+
+<script>
+    $(function() {
+        //验证手机号
+        /*$("#tel").blur(function () {
+            var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+            if (!myreg.test($poneInput.val())) {
+                alert("手机号格式不对")
+                return false;
+            } else {
+                alert("手机号格式正确")
+                return true;
+            }
+        })*/
+        
+        $("#psw_ag").blur(function () {
+            if ($("#psw").val() != $("#psw_ag").val()) {
+
+                alert("两次输入的密码不一致");
+
+            }
+        })
+    });
+    
+    layui.use(['form'], function(){
+        var form = layui.form;
+        //自定义验证规则
+        form.verify({
+           password: [
+                /^[\S]{6,12}$/
+                ,'密码必须6到12位，且不能出现空格'
+            ]
+        });
+        //监听提交
+        form.on('submit(demo1)', function(data){
+            $.ajax({
+                url:"/user/register",
+                type:"post",
+                data:$("form").serialize(),
+                dataType:'json',
+                success:function(res) {
+                    if(res == '1') {
+                        alert("注册成功！");
+                        window.location.href=("login");
+                    } else {
+                        layer.alert(res.info);
+                    }
+                },
+                error: function() {
+                    elert("ajax错误");
+                }
+            });
+            return false;
+
+        });
+    })
+</script>
+
+</body>
+</html>

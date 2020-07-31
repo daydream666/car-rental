@@ -1,0 +1,205 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!DOCTYPE html>
+    <title>汽车管理</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/mymain.mymain.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body style="position: static">
+
+<div id="app" class="bgGray">
+    <div data-v-67ef3a4a class="csdheader" style="margin-right: 15px">
+        <div data-v-67ef3a4a="" class="right phone">
+            <label data-v-67ef3a4a style="margin-top: 10px">
+                <p>欢迎<span></span></p>
+                <a data-v-67ef3a4a href="javascript:void" class="colorRed">/</a>
+                <a data-v-67ef3a4a href="/user/toRegister" class="colorRed" style="margin-right: 10px;font-size: 15px">退出</a>
+            </label>
+        </div>
+    </div>
+
+    <div data-v-95ac8d30="" class="header3">
+        <div data-v-95ac8d30="" class="layout clear">
+            <div data-v-95ac8d30="" class="left logo">
+                <a data-v-95ac8d30="" >
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="userInfo">
+        <div class="layout">
+            <div class="userInfoCom clear">
+                <div class="userInfoL left" style="background-color: #01AAED">
+                    <div data-v-1cae2c34="" class="userNav">
+                        <dl data-v-1cae2c34="" class="userMsg">
+                            <dd data-v-1cae2c34="">
+                                <p data-v-1cae2c34=""style="font-size: large;color:#FFFFFF">在线租车管理系统</p>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="userInfoR right">
+                    <!-- 修改car -->
+                    <div class="orderManage manage" th:if="${car ne null}">
+                        <form method="post" onsubmit="return checkCarForm()" action="/car/updateCar" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input type="text" th:value="${car.id == null ? null : car.id}" class="form-control" id="carId" name="id" style="display: none">
+                            </div>
+                            <div class="form-group">
+                                <label for="carName">名称</label>
+                                <input type="text" required th:value="${car.name == null ? null : car.name}" class="form-control" name="name" id="carName" placeholder="名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="carType">类型</label>
+                                <input type="text" required th:value="${car.type == null ? null : car.type}" class="form-control" name="type" id="carType" placeholder="类型">
+                            </div>
+                            <div class="form-group">
+                                <label for="carSitnum">座位</label>
+                                <input type="text" required th:value="${car.sitnum == null ? null : car.sitnum}" class="form-control" name="sitnum" id="carSitnum" placeholder="类型">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">门店</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">下拉菜单<span class="caret"></span></button>
+                                            <ul id="selectName1" class="dropdown-menu">
+                                                <!-- th:onclick="'javascript:showId(\''+ this +'\',\''+${city.id}+'\');'" -->
+                                                <li th:each="city:${cityList}" th:text="${city.id}+${city.name}"
+                                                    onclick="showName(this)" class="mendian">
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <input type="hidden" required class="form-control" id="cid" name="cid">
+                                        <input type="text" name="name1" required class="form-control" disabled id="cityName1"
+                                               aria-label="...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="carNumber">数量</label>
+                                <input type="text" required th:value="${car.number == null ? null : car.number}" class="form-control" name="number" id="carNumber" placeholder="数量">
+                            </div>
+                            <div class="form-group">
+                                <label for="carPrice">价格</label>
+                                <input type="text" required th:value="${car.price == null ? null : car.price}" class="form-control" name="price" id="carPrice" placeholder="价格">
+                            </div>
+                            <div class="form-group">
+                                <label for="carPicture">图片</label>
+                                <input type="file" required id="carPicture" name="carPicture">
+                            </div>
+                            <button type="submit" class="btn btn-default">提交</button>
+                        </form>
+                    </div>
+
+                    <!-- 添加car -->
+                    <div class="orderManage manage" th:if="${car eq null}">
+                        <form method="post" onsubmit="return checkCarForm()" action="/car/updateCar" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="addCarId" name="id" style="display: none">
+                            </div>
+                            <div class="form-group">
+                                <label for="addCarName">名称</label>
+                                <input type="text" required class="form-control" name="name" id="addCarName" placeholder="名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="addCarType">类型</label>
+                                <input type="text" required class="form-control" name="type" id="addCarType" placeholder="类型">
+                            </div>
+                            <div class="form-group">
+                                <label for="addCarSitnum">座位</label>
+                                <input type="text" required class="form-control" name="sitnum" id="addCarSitnum" placeholder="类型">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">门店</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">下拉菜单<span class="caret"></span></button>
+                                            <ul class="dropdown-menu">
+                                                <!-- th:onclick="'javascript:showId(\''+ this +'\',\''+${city.id}+'\');'" -->
+                                                <li th:each="city:${cityList}" th:text="${city.id}+${city.name}"
+                                                    onclick="showName(this)" class="mendian">
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <input type="hidden" required class="form-control" id="addCid" name="cid">
+                                        <input type="text" name="name1" required class="form-control" disabled id="addCityName1"
+                                               aria-label="...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCarNumber">数量</label>
+                                <input type="text" required class="form-control" name="number" id="addCarNumber" placeholder="数量">
+                            </div>
+                            <div class="form-group">
+                                <label for="addCarPrice">价格</label>
+                                <input type="text" required class="form-control" name="price" id="addCarPrice" placeholder="价格">
+                            </div>
+                            <div class="form-group">
+                                <label for="addCarPicture">图片</label>
+                                <input type="file" required id="addCarPicture" name="carPicture">
+                            </div>
+                            <button type="submit" class="btn btn-default">提交</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-v-3aaf9db2="" class="footer2">
+        <div data-v-3aaf9db2="" class="layout clear">
+            <div data-v-3aaf9db2="" class="d1">
+                </div></div></div>
+
+</div>
+
+<script type="text/javascript">
+    //解决选择下拉框内容到输入框内容的问题
+    function showName(obj){
+        var city = $(obj).text();
+        var reg = /^[0-9]*$/;
+        var idArr = [],nameArr = [];
+        for (var i = 0; i < city.toString().length; i++) {
+            if (reg.test(city.charAt(i))) {
+                //city的id
+                idArr.push(city.charAt(i));
+            }else {
+                //city的name
+                nameArr.push(city.charAt(i));
+            }
+        }
+        var id = idArr.join("");
+        var name = nameArr.join("");
+        /*window.console.log("id="+id+" name="+name);*/
+        //修改
+        $("#cid").val(id);
+        $("#cityName1").val(name);
+        //添加
+        $("#addCid").val(id);
+        $("#addCityName1").val(name);
+    }
+
+    //表单验证
+    function checkCarForm() {
+        if (($("#cityName1").val() != "" && $("#cityName1").val() != null) || ($("#addCityName1").val() != "" && $("#addCityName1").val() != null)){
+            return true;
+        } else {
+            alert("门店未选择");
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

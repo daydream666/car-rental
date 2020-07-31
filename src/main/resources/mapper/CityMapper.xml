@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qf.mapper.CityMapper">
+
+    <!--<select id="findAll" resultType="com.qf.entity.City">
+        SELECT c1.name cname,c2.name dname from sys_city c1
+        JOIN sys_city c2 ON c1.id=c2.pid WHERE c2.pid=#{pid}
+    </select>-->
+    <select id="findAll" resultType="com.qf.entity.City">
+        SELECT * from sys_city WHERE pid=#{pid}
+    </select>
+
+    <select id="findById" resultType="com.qf.entity.City">
+        SELECT name from sys_city WHERE id=#{getid}
+    </select>
+
+    <resultMap id="cityMap" type="com.qf.entity.City">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <!--<result property="id1" column="id1"></result>-->
+        <result property="name1" column="name1"></result>
+    </resultMap>
+    <!--后台分页-->
+    <select id="selectAllCity" resultMap="cityMap">
+        SELECT s1.id,s2.id id1 ,s1.name,s2.name name1 FROM sys_city s1,sys_city s2
+        WHERE s1.id = s2.pid
+        limit #{page},5
+    </select>
+
+    <select id="countCity" resultType="Integer">
+        SELECT COUNT(*) FROM sys_city WHERE NOT pid = 0
+    </select>
+
+    <!--删除城市-->
+    <delete id="delCityByName" parameterType="java.lang.String">
+        delete from sys_city where name = #{name}
+    </delete>
+
+
+    <resultMap id="aCityMap" type="com.qf.entity.City">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="id1" column="id1"></result>
+        <result property="name1" column="name1"></result>
+    </resultMap>
+    <!-- 后台一条城市信息查询 -->
+    <select id="findByName" parameterType="java.lang.String" resultMap="aCityMap">
+        SELECT s1.id,s2.id id1,s1.name,s2.name name1 FROM sys_city s1,sys_city s2
+        WHERE s1.id = s2.pid
+        having name1 = #{name1}
+    </select>
+
+    <!--后台修改一条城市信息-->
+    <update id="updateCityById" parameterType="com.qf.entity.City">
+        update sys_city
+        set name = #{name}
+        where id = #{id}
+    </update>
+
+
+    <!-- 添加cityname -->
+    <insert id="addCityName" parameterType="com.qf.entity.City">
+        <selectKey resultType="int" keyColumn="id" keyProperty="id" order="AFTER">
+            select last_insert_id();
+        </selectKey>
+        insert into sys_city (name,pid) values (#{name},0)
+    </insert>
+
+    <!-- 添加cityname门店地址 -->
+    <insert id="addCityName1" parameterType="com.qf.entity.City">
+        insert into sys_city (name,pid) values (#{name},#{pid})
+    </insert>
+
+    <!-- 判断city门店是否存在 -->
+    <select id="selectByName" resultType="com.qf.entity.City">
+        select * from sys_city
+        where name = #{name}
+    </select>
+
+    <!-- 查询所有门店 -->
+    <select id="findAllName1" resultType="com.qf.entity.City">
+        SELECT id,name FROM sys_city WHERE not pid = 0
+    </select>
+</mapper>

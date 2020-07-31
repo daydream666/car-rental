@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>填写与核对订单</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/order.ordersubmit.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body style="position: static">
+    <div id="app" class="bgGray">
+        <div data-v-95ac8d30="" class="header3">
+            <div data-v-95ac8d30="" class="layout clear">
+                <div data-v-95ac8d30="" class="left logo">
+                    <a data-v-95ac8d30="" href="/car/index">
+                    </a>
+                </div>
+                <div data-v-95ac8d30="" class="header3User right">
+                    <i data-v-95ac8d30="" class="iconfont icon-phone"></i>
+                    <span data-v-95ac8d30="" class="sp2">欢迎您，<span th:text="${session.user}"></span></span>
+                    <span data-v-95ac8d30="" class="sp3"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkOrderTit">
+            <div class="layout">
+                <div class="checkOrderTitCom">
+                    <div class="checkOrderTitComT">
+                        <div class="td1 bgRed"></div>
+                        <div class="td2 bgRed">1</div>
+                        <div class="td3 bgRed"></div>
+                        <div class="td2 bgRed">2</div>
+                        <div class="td3 bgGray1"></div>
+                        <div class="td2 bgGray1">3</div>
+                        <div class="td1 bgGray1"></div>
+                    </div>
+                    <div class="checkOrderTitComB">
+                        <div class="bd1 colorRed">选择车辆</div>
+                        <div class="bd2 colorRed">填写和核对订单</div>
+                        <div class="bd1 colorGray">提交成功</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="orderMsg clear">
+
+            <div class="orderMsgs">
+            <div class="orderMsgL left">
+                <img :src="infos.picture">
+                <p>{{infos.type}}|{{infos.sitnum}}座</p>
+
+            </div>
+            <div class="orderMsgR left">
+                <div class="carTitle">
+                    <span class="carTitle1 left">{{infos.name}}</span>
+                </div>
+
+                <div class="selCarMsg">
+                    <div class="selCarMsgCom">
+                        <div class="MsgTit">取车</div>
+                        <div class="Msg">取车地址：{{getcitys.name}}</div>
+                    </div>
+
+                    <div class="selCarMsgCom">
+                        <div class="MsgTit">还车</div>
+                        <div class="Msg">还车地址：{{backcitys.name}}</div>
+                    </div>
+                </div>
+            </div>
+                <div class="costCom right">
+                    <h3>费用明细</h3>
+                    <div class="item">
+                        <span class="left" >基本租金</span>
+                        <span class="right">{{infos.price}}元</span>
+                    </div>
+                    <div class="item">
+                        <span class="left" >手续费（35元/单）</span>
+                        <span class="right">35元</span>
+                    </div>
+                    <div class="item">
+                        <span class="left" >押金</span>
+                        <span class="right">1000元</span>
+                    </div>
+                    <div class="payMony">
+                    <label class="right">应付金额&nbsp;
+                    <span id="total">{{current()}}</span></label>
+                    </div>
+
+                    <button class="buttons right" id="butt" onclick="submitorder()">
+                        提交订单
+                    </button>
+
+                </div>
+        </div>
+
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        var vm = new Vue({
+            el:'.orderMsgs',
+            data:{
+                infos:'',
+                getcitys : '',
+                backcitys: ''
+            },
+
+            methods:{
+                current:function (){
+                    var total = 0;
+                    var money = 1035;
+                    total = this.infos.price + money;
+                    return total;
+        }
+            }
+        });
+
+
+
+    </script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            var getid = window.location.search;
+            $.ajax({
+                type:"get",
+                url:"/city/citys"+getid,
+                dataType:"json",
+                success:function(data){
+                   /* if(data.code==1) {
+                        var infos = data.info;
+                        vm.getcitys = infos.getCity;
+                        vm.backcitys = infos.backCity;
+                    }*/
+                    if(data!=null) {
+                        vm.getcitys = data[0];
+                        vm.backcitys = data[1];
+                    }
+                },
+                error : function(){
+                    alert("ajax加载失败");
+                }
+
+            })
+        })
+
+    </script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            var getid = window.location.search;
+            $.ajax({
+                type:"get",
+                url:"/car/findcar"+getid,
+                dataType:"json",
+                success:function(data){
+                    /*if(data.code==1) {
+                        vm.infos = data.info;
+                    }*/
+                    if(data!=null) {
+                        vm.infos = data;
+                    }
+                },
+                error : function(){
+                    alert("ajax加载失败");
+                }
+
+            })
+        })
+
+    </script>
+
+
+    <script type="text/javascript">
+
+        function submitorder() {
+            var id = window.location.search;
+            var total = $("#total").html();
+            $.ajax({
+                type:"get",
+                url:"/order/add"+id + "&oprice="+ total,
+                //dataType:"json",
+                success:function(data){
+                        /*alert(data.info);
+                        window.location.href="../mymain/mymain.html";*/
+                        if (data == 'success') {
+                            alert(data)
+                            window.location.href="/user/tomymain";
+                        }else {
+                            alert("你未登录，请先去登录");
+                            window.location.href="/user/login";
+                        }
+                },
+                error : function(){
+                    alert("ajax加载失败");
+                }
+
+            })
+        }
+
+    </script>
+
+
+
+
+</body>
+</html>

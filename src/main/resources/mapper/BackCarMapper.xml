@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qf.mapper.BackCarMapper">
+
+    <insert id="addBackCar">
+        insert into sys_backcar (cid,uid,getid,backid,oprice,status,verify)
+        values (#{cid},#{uid},#{getid},#{backid},#{oprice},#{status},#{verify})
+        <selectKey keyProperty="id" keyColumn="id" order="AFTER" resultType="int">
+            select last_insert_id();
+        </selectKey>
+    </insert>
+
+    <!--还车-->
+    <resultMap id="backMap" type="com.qf.entity.BackCar">
+        <id property="id" column="id"></id>
+        <result property="oprice" column="oprice"></result>
+        <result property="status" column="status"></result>
+        <result property="verify" column="verify"></result>
+        <association property="car" javaType="com.qf.entity.Car">
+            <result property="name" column="name"></result>
+        </association>
+        <association property="city1" javaType="com.qf.entity.City">
+            <result property="name" column="getcity"></result>
+        </association>
+        <association property="city2" javaType="com.qf.entity.City">
+            <result property="name" column="backcity"></result>
+        </association>
+    </resultMap>
+    <select id="getBackCar" resultMap="backMap">
+        SELECT b.id,b.oprice,b.status,b.verify,c.name,c1.name getcity,c2.name backcity
+        FROM sys_backcar b
+        LEFT JOIN sys_car c ON b.cid = c.id
+        LEFT JOIN sys_city c1 ON b.getid = c1.id
+        LEFT JOIN sys_city c2 ON b.backid = c2.id
+        WHERE b.uid=#{uid} AND b.status = #{status}
+    </select>
+
+    <select id="getBackCarById" resultType="com.qf.entity.BackCar" parameterType="java.lang.Integer">
+        select * from sys_backcar where id = #{id}
+    </select>
+
+    <select id="selectBackCar" resultType="com.qf.entity.BackCar"
+            parameterType="com.qf.entity.BackCar">
+        select * from sys_backcar where uid = #{uid} and status = #{status}
+    </select>
+
+    <!--后台车辆审核-->
+    <resultMap id="afterBackCar" type="com.qf.entity.BackCar">
+        <id property="id" column="id"></id>
+        <result property="oprice" column="oprice"></result>
+        <result property="status" column="status"></result>
+        <result property="verify" column="verify"></result>
+        <association property="car" javaType="com.qf.entity.Car">
+            <result property="name" column="name"></result>
+        </association>
+        <association property="city1" javaType="com.qf.entity.City">
+            <result property="name" column="getcity"></result>
+        </association>
+        <association property="city2" javaType="com.qf.entity.City">
+            <result property="name" column="backcity"></result>
+        </association>
+        <association property="user" javaType="com.qf.entity.User">
+            <result property="tel" column="tel"></result>
+        </association>
+    </resultMap>
+    <select id="selectAllBackCar" resultMap="afterBackCar">
+        SELECT b.id,u.tel,b.oprice,b.status,b.verify,c.name,c1.name getcity,c2.name backcity
+        FROM sys_backcar b
+        LEFT JOIN sys_car c ON b.cid = c.id
+        LEFT JOIN sys_city c1 ON b.getid = c1.id
+        LEFT JOIN sys_city c2 ON b.backid = c2.id
+        LEFT JOIN sys_user u ON b.uid = u.id
+        limit #{page},5
+    </select>
+
+    <select id="countBackCar" resultType="java.lang.Integer">
+        select count(*) from sys_backcar
+    </select>
+
+    <!--修改车辆审核状态-->
+    <update id="updateBackCarStatus" parameterType="com.qf.entity.BackCar">
+        update sys_backcar
+        set
+        status = #{status},
+        verify = #{verify}
+        where id = #{id}
+    </update>
+</mapper>

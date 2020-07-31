@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qf.mapper.OrderMapper">
+
+    <insert id="addOrder">
+        insert into sys_order (cid,uid,getid,backid,oprice,status)
+        values (#{cid},#{uid},#{getid},#{backid},#{oprice},#{status})
+    </insert>
+
+    <resultMap id="orderMap" type="com.qf.entity.Order">
+        <id property="id" column="oid"></id>
+        <result property="oprice" column="oprice"></result>
+        <result property="status" column="ostatus"></result>
+        <association property="car" javaType="com.qf.entity.Car">
+            <result property="name" column="cname"></result>
+        </association>
+
+        <association property="city1" javaType="com.qf.entity.City">
+            <result property="name" column="getcity"></result>
+        </association>
+        <association property="city2" javaType="com.qf.entity.City">
+            <result property="name" column="backcity"></result>
+        </association>
+
+        <association property="user" javaType="com.qf.entity.User">
+        </association>
+    </resultMap>
+    <select id="findAllOrders" resultMap="orderMap">
+        SELECT o.id oid,o.oprice,o.status ostatus,c.name cname,
+        c1.name getcity,c2.name backcity 
+        FROM sys_order o
+        JOIN sys_car c ON o.cid=c.id
+        JOIN sys_city c1 ON c1.id=o.getid 
+        JOIN sys_city c2 on c2.id=o.backid 
+        JOIN sys_user u ON u.id=o.uid 
+        WHERE u.id=#{uid}
+        limit #{page},5
+    </select>
+
+    <select id="countOrders" resultType="Integer">
+        SELECT count(*)
+        FROM sys_order o
+        JOIN sys_car c ON o.cid=c.id
+        JOIN sys_city c1 ON c1.id=o.getid
+        JOIN sys_city c2 on c2.id=o.backid
+        JOIN sys_user u ON u.id=o.uid
+        WHERE u.id=#{id}
+    </select>
+
+    <!--修改订单状态-->
+    <update id="updateOrderStatus">
+        update sys_order
+        set status = #{status}
+        where id = #{id}
+    </update>
+
+    <!--获取用户订单已支付状态总数-->
+    <select id="countOrderStatus" resultType="java.lang.Integer">
+        select count(*) from sys_order where uid = #{uid} and status = '已支付'
+    </select>
+</mapper>

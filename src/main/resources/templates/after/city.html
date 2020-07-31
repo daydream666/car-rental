@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>城市管理</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/mymain.mymain.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body style="position: static">
+
+<div id="app" class="bgGray">
+    <div data-v-67ef3a4a class="csdheader" style="margin-right: 15px">
+        <div data-v-67ef3a4a="" class="right phone">
+            <label data-v-67ef3a4a style="margin-top: 10px">
+                <p>欢迎<span th:text="${session.user}"></span></p>
+                <a data-v-67ef3a4a href="/user/afterLogin" class="colorRed" style="margin-right: 10px;font-size: 15px">退出</a>
+            </label>
+        </div>
+    </div>
+
+    <div data-v-95ac8d30="" class="header3">
+        <div data-v-95ac8d30="" class="layout clear">
+            <div data-v-95ac8d30="" class="left logo">
+                <a data-v-95ac8d30="" >
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="userInfo">
+        <div class="layout">
+            <div class="userInfoCom clear">
+                <div class="userInfoL left" style="background-color: #01AAED">
+                    <div data-v-1cae2c34="" class="userNav">
+                        <dl data-v-1cae2c34="" class="userMsg">
+                            <dd data-v-1cae2c34="">
+                                <p data-v-1cae2c34=""style="font-size: large;color:#FFFFFF">在线租车管理系统</p>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="userInfoR right">
+                    <div class="orderManageTit manageTit clear">
+                        <ul class="nav nav-pills">
+                            <li role="presentation" class="active"><a shiro:hasPermission="user:query" href="/car/toCar">汽车管理</a></li>
+                            <li role="presentation" class="active"><a shiro:hasPermission="user:query" href="/city/toCity">城市管理</a></li>
+                            <li role="presentation" class="active"><a shiro:hasPermission="user:query" href="/user/toUser">用户管理</a></li>
+                            <li role="presentation" class="active"><a shiro:hasPermission="user:query" href="/backcar/toBackCar">车辆审核</a></li>
+                            <li role="presentation" class="active"><a shiro:hasPermission="user:query" href="/score/toScore">积分管理</a></li>
+                        </ul>
+                    </div>
+                    <div class="orderManage manage">
+                        <div class="orderType clear type">
+                            <div class="sel" shiro:hasPermission="user:add" onclick="addCity()">添加城市</div>
+                        </div>
+                        <div class="orderList list">
+                            <div class="orderListCom listCom" style="position: static;">
+                                <table cellspacing="0" cellpadding="0">
+                                    <tr class="firstTr">
+                                        <th>编号</th>
+                                        <th style="display: none">门店id</th>
+                                        <th>城市</th>
+                                        <th>门店地址</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </table>
+                                <div class="noData" id="noda">
+                                    <table cellspacing="0" cellpadding="0">
+                                        <tr class="firstTr" v-for="city in obj">
+                                            <td>{{city.id}}</td>
+                                            <td style="display: none">{{city.id1}}</td>
+                                            <td>{{city.name}}</td>
+                                            <td>{{city.name1}}</td>
+                                            <td>
+                                                <a href="#" id="del" shiro:hasPermission="user:delete" v-on:click="del(city.name1)" style="color:red">删除</a>
+                                                <a href="#" id="update" shiro:hasPermission="user:update" @click="update(city.name1)" style="color:red">修改</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <div id="fenye"></div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-v-3aaf9db2="" class="footer2">
+        <div data-v-3aaf9db2="" class="layout clear">
+            <div data-v-3aaf9db2="" class="d1">
+                </div></div></div>
+
+</div>
+
+<script type="text/javascript">
+    //后台城市添加
+    function addCity() {
+        window.location.href = "/city/toCityUpdate";
+    }
+
+    var totalCount;
+    var vm = new Vue({
+        el:'#noda',
+        data:{
+            obj:[],
+        },
+        methods:{
+            del:function (name1) {
+                var msg = "确定删除?";
+                if (confirm(msg) == true){
+                    window.location.href = "/city/delCity?name="+name1;
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            update:function (name1) {
+                window.location.href = "/city/toCityUpdate?name="+name1;
+            }
+        }
+    });
+
+    $(function () {
+        loadData(1);
+    })
+    function loadData(page) {
+        $.ajax({
+            type:"get",
+            url:"/city/allCity?page="+page,
+            dataType:"json",
+            async: false,
+            success:function(data){
+                if (data!=null){
+                    totalCount = data[1];
+                    vm.obj = data[0];
+                }
+            },
+            error:function () {
+                alert("ajax加载错误");
+            }
+        })
+    }
+
+
+    layui.use(['laypage', 'layer'], function() {
+        var laypage = layui.laypage
+            , layer = layui.layer;
+
+        //总页数大于页码总数
+        laypage.render({
+            elem: 'fenye'
+            , count: totalCount //数据总数
+            , limit:5
+            , jump: function (obj, first) {
+                /*console.log(obj)*/
+                var currentPage = obj.curr;
+
+                loadData(currentPage);
+
+            }
+        });
+
+    });
+
+</script>
+
+</body>
+</html>

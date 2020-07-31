@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="../css/mymain.mymain.css">
+    <script type="application/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body style="position: static">
+
+<div id="app" class="bgGray">
+    <div data-v-95ac8d30="" class="header3">
+        <div data-v-95ac8d30="" class="layout clear">
+            <div data-v-95ac8d30="" class="left logo">
+                <a data-v-95ac8d30="" href="/car/index">
+                </a>
+            </div>
+            <div data-v-95ac8d30="" class="header3User right">
+            <span data-v-95ac8d30="" class="sp2">欢迎您，<span th:text="${session.user}"></span></span>
+                <span data-v-95ac8d30="" class="sp3">&nbsp;&nbsp;积分：<!--/*@thymesVar id="score" type="templates"*/-->
+                <span id="score" th:text="${score}"></span></span></span>
+        </div>
+        </div>
+    </div>
+    <div class="userInfo">
+        <div class="layout">
+            <div class="userInfoCom clear">
+                <div class="userInfoL left">
+                    <div data-v-1cae2c34="" class="userNav">
+                        <ul data-v-1cae2c34="" class="manNav">
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tomymain" class="sel">订单管理</a>
+                            </li>
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tobackcar" class="">还车管理</a>
+                            </li>
+                            <li data-v-1cae2c34="">
+                                <a data-v-1cae2c34="" href="/user/tomyinfo" class="">个人信息</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="userInfoR right">
+
+                    <div class="orderManage manage">
+                        <div class="orderManageTit manageTit clear">
+                            <div class="left tit">订单管理</div>
+                            </div>
+                        <div class="orderType clear type">
+                            <div class="sel">全部订单<!--/*@thymesVar id="backcarId" type="templates"*/-->
+                            <span th:text="${backcarId}" id="backcarId" style="display: none"></span></div>
+                        </div>
+                        <div class="orderList list">
+                            <div class="orderListCom listCom" style="position: static;">
+                                <table cellspacing="0" cellpadding="0">
+                                    <tr class="firstTr">
+                                        <th>订单号</th>
+                                        <th>订单金额(押金1000元)</th>
+                                        <th>车型</th>
+                                        <th>取车地址</th>
+                                        <th>还车地址</th>
+                                        <th>订单状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </table>
+                                <div class="noData" id="noda">
+
+                                    <table cellspacing="0" cellpadding="0">
+                                        <tr class="firstTr" v-for="site in obj">
+                                            <td >{{site.id}}</td>
+                                            <td>{{site.oprice}}</td>
+                                            <td>{{site.car.name}}</td>
+                                            <td>{{site.city1.name}}</td>
+                                            <td>{{site.city2.name}}</td>
+                                            <td>{{site.status}}</td>
+                                            <td>
+                                                <a href="#" id="del" v-on:click="del(site.id)" style="color:red">删除</a>
+                                                <a href="#" id="alipay" v-on:click="alipay(site.id,site.oprice,site.car.name)"  style="color:red">支付</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <div id="fenye"></div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-v-3aaf9db2="" class="footer2">
+        <div data-v-3aaf9db2="" class="layout clear">
+            <div data-v-3aaf9db2="" class="d1">
+            </div>
+        </div>
+    </div>
+
+   </div>
+
+<script type="text/javascript">
+    var score = $("#score").text();
+    window.console.log("积分="+score);
+
+    var totalCount;
+    var vm = new Vue({
+        el:'#noda',
+        data:{
+            obj:[],
+        },
+        methods: {
+            //删除订单
+            del: function (id) {
+                //alert(id)
+                var msg = "确定删除?";
+                if (confirm(msg) == true){
+                    window.location.href = "/user/del?id=" + id
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            //订单支付
+            alipay: function (id,price,name) {
+                $.ajax({
+                    type:"get",
+                    url:"/backcar/get?id="+$("#backcarId").text(),
+                    dataType:"text",
+                    success:function(data){
+                        if (data.toString() == "reviewed") {
+                            alert("未还车");
+                            window.location.href = "/user/tobackcar";
+                        }else if (data.toString() == "backed") {
+                            window.location.href =
+                                "/alipay/payIndex?id=" + id+"&price="+(price-1000)
+                                +"&name="+name + "&score="+score;
+                        }
+                    },
+                    error:function () {
+                        alert("ajax加载错误");
+                    }
+                })
+                /*window.location.href =
+                    "/alipay/payIndex?id=" + id+"&price="+(price-1000)+"&name="+name + "&score="+score;*/
+            }
+        }
+    });
+
+    $(function () {
+        loadData(1);
+    })
+    function loadData(page) {
+        $.ajax({
+            type:"get",
+            url:"/order/all?page="+page,
+            dataType:"json",
+            async: false,
+            success:function(data){
+                //id为0时为父类
+                /*if(data.code==1){
+                    totalCount = data.info.total;
+                    vm.obj=data.info.rows;
+                } else{
+                    alert(data.info);
+                }*/
+                if (data!=null){
+                    totalCount = data[1];
+                    vm.obj = data[0];
+                }
+            },
+            error:function () {
+                alert("ajax加载错误");
+            }
+        })
+    }
+
+
+    layui.use(['laypage', 'layer'], function() {
+        var laypage = layui.laypage
+            , layer = layui.layer;
+
+        //总页数大于页码总数
+        laypage.render({
+            elem: 'fenye'
+            , count: totalCount //数据总数
+            , limit:5
+            , jump: function (obj, first) {
+                /*console.log(obj)*/
+                var currentPage = obj.curr;
+
+                loadData(currentPage);
+
+            }
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
